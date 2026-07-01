@@ -35,15 +35,7 @@ This is a Windows-compatible fork of [kcchien/claude-code-statusline](https://gi
 **ASCII fallback** (`CLAUDE_STATUSLINE_ASCII=1`)
 ![ASCII](docs/images/ascii.svg)
 
-These are real, exact renders — not screenshots. `tools/render_svg.py` parses the actual ANSI/truecolor escape codes `statusline.sh` outputs and draws them as SVG text, so every image is pixel-accurate to what the script really produces and stays cheap to regenerate:
-
-```bash
-./tools/generate-showcase.sh
-```
-
-This re-runs the script against a set of hardcoded mock JSON payloads (see the file for all of them — normal/warning/danger/dirty-branch/worktree/agent/ASCII) and writes fresh SVGs to `docs/images/`. Add a new mock state to that script whenever a new visual feature needs a showcase image — no terminal, screenshot tool, or manual cropping required.
-
-(`tools/render_svg.py` needs Python 3, stdlib only — no packages to install. Only used for regenerating these images; not a runtime dependency of the status line itself.)
+These are real, exact renders of `statusline.sh`'s actual ANSI/truecolor output against hardcoded mock states — not manual screenshots. (Generated with a small internal dev script, kept out of this repo — not needed to use or configure the status line.)
 
 ## Why this fork exists
 
