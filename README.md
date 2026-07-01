@@ -20,13 +20,14 @@ This is a Windows-compatible fork of [kcchien/claude-code-statusline](https://gi
 
 ## Why this fork exists
 
-The original script assumes a macOS/Linux bash + native `jq`. On Windows (git-bash), three things break silently:
+The original script assumes a macOS/Linux bash + native `jq`. On Windows (git-bash), four things break silently:
 
 1. **No `jq`** — the script has a hard `command -v jq` gate and just goes blank without it.
 2. **CRLF corruption** — native Windows `jq.exe` writes CRLF line endings (text-mode stdio). git-bash reads that raw, and the stray `\r` breaks every numeric field's arithmetic.
 3. **Backslash paths** — `workspace.current_dir` on Windows uses `\`, not `/`. The original `split("/")` never finds a separator, so the *entire path* leaks into the display — and because it contains literal backslashes, `printf '%b'` later misinterprets them as escape sequences (`\U`, `\0nn`, ...), corrupting the rest of the line.
+4. **`stat` flag mismatch** — the git-status cache reads the cache file's mtime with BSD `stat -f %m` (macOS). git-bash ships GNU coreutils, which uses `stat -c %Y` instead; the BSD form silently fails there. Harmless in effect (the cache just always misses and re-runs git, not a correctness bug), but worth fixing since it defeats the whole point of caching.
 
-This fork fixes all three, plus adds the gradient/rate-limit/git features above.
+This fork fixes all four, plus adds the gradient/rate-limit/git features above.
 
 ## Requirements
 
