@@ -6,10 +6,7 @@ This is a Windows-compatible fork of [kcchien/claude-code-statusline](https://gi
 
 ## What it looks like
 
-```
-✨ Opus 4.6  █████░░░░░ 42%  🚦 5h:36% ███░░░░░░░ · 7d:91% █████████░
-🌿 main ↑2 · +150/-30 · 📁 my-project
-```
+![Normal state](docs/images/normal.svg)
 
 - Model name and directory path render as smooth per-character truecolor gradients.
 - Context-window usage bar: green → yellow → orange → red, 10 blocks.
@@ -17,6 +14,27 @@ This is a Windows-compatible fork of [kcchien/claude-code-statusline](https://gi
 - Git branch, dirty flag (`*`), ahead/behind vs. upstream (`↑`/`↓`).
 - Lines added/removed, current directory, active subagent/worktree indicator.
 - Degrades cleanly: truecolor → ANSI 256 → plain ASCII, and Nerd Font / emoji / plain-Unicode icon sets.
+
+### All states
+
+| | |
+|---|---|
+| **Warning** (75% context) | **Danger** (92% context, high rate limits) |
+| ![Warning](docs/images/warning.svg) | ![Danger](docs/images/danger.svg) |
+| **Dirty branch, ahead/behind upstream** | **Active worktree** |
+| ![Git status](docs/images/git-status.svg) | ![Worktree](docs/images/worktree.svg) |
+| **Active subagent** | **ASCII fallback** (`CLAUDE_STATUSLINE_ASCII=1`) |
+| ![Agent](docs/images/agent.svg) | ![ASCII](docs/images/ascii.svg) |
+
+These are real, exact renders — not screenshots. `tools/render_svg.py` parses the actual ANSI/truecolor escape codes `statusline.sh` outputs and draws them as SVG text, so every image is pixel-accurate to what the script really produces and stays cheap to regenerate:
+
+```bash
+./tools/generate-showcase.sh
+```
+
+This re-runs the script against a set of hardcoded mock JSON payloads (see the file for all of them — normal/warning/danger/dirty-branch/worktree/agent/ASCII) and writes fresh SVGs to `docs/images/`. Add a new mock state to that script whenever a new visual feature needs a showcase image — no terminal, screenshot tool, or manual cropping required.
+
+(`tools/render_svg.py` needs Python 3, stdlib only — no packages to install. Only used for regenerating these images; not a runtime dependency of the status line itself.)
 
 ## Why this fork exists
 
