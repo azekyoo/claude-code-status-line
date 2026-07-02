@@ -12,7 +12,7 @@ This is a Windows-compatible fork of [kcchien/claude-code-statusline](https://gi
 - Context-window usage bar: green → yellow → orange → red, 10 blocks.
 - 5h / 7d rate-limit usage: same gradient bar style, label + value gradient text, plus when each window resets (local clock time — always visible, "--%" placeholder before Claude Code has usage data yet).
 - Git branch, dirty flag (`*`), ahead/behind vs. upstream (`↑`/`↓`).
-- Lines added/removed, current directory, active subagent/worktree indicator.
+- Lines added/removed — real `git diff` (staged + unstaged, what's queued for your next commit), not Claude's own session edit tracking. Current directory, active subagent/worktree indicator.
 - Degrades cleanly: truecolor → ANSI 256 → plain ASCII, and Nerd Font / emoji / plain-Unicode icon sets.
 
 ### All states

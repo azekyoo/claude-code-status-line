@@ -384,29 +384,38 @@ if [[ -n "${cwd_full:-}" && -d "${cwd_full:-}" ]]; then
         cached_ahead="${cached_ahead:-0}"
         cached_behind="${cached_behind:-0}"
       fi
-      echo "${cached_branch}|${cached_dirty}|${cached_ahead}|${cached_behind}" > "$GIT_CACHE"
+      # Real working-tree diff (staged + unstaged) vs HEAD — what's actually
+      # queued for the next commit, independent of what Claude edited this
+      # session (that's cost.total_lines_added/removed, a different thing).
+      read -r cached_diff_add cached_diff_rm < <(
+        { git -C "$cwd_full" diff --numstat 2>/dev/null; git -C "$cwd_full" diff --cached --numstat 2>/dev/null; } |
+          awk '{ a += ($1 == "-" ? 0 : $1); d += ($2 == "-" ? 0 : $2) } END { print a+0, d+0 }'
+      )
+      echo "${cached_branch}|${cached_dirty}|${cached_ahead}|${cached_behind}|${cached_diff_add}|${cached_diff_rm}" > "$GIT_CACHE"
     else
-      echo "|||" > "$GIT_CACHE"
+      echo "|||||" > "$GIT_CACHE"
     fi
   fi
 
   ahead=0
   behind=0
   if [[ -f "$GIT_CACHE" ]]; then
-    IFS='|' read -r cached_br cached_dt cached_ah cached_bh < "$GIT_CACHE"
+    IFS='|' read -r cached_br cached_dt cached_ah cached_bh cached_da cached_dr < "$GIT_CACHE"
     if [[ -z "$git_branch" ]]; then git_branch="${cached_br}"; fi
     dirty="${cached_dt}"
     ahead="${cached_ah:-0}"
     behind="${cached_bh:-0}"
+    diff_add="${cached_da:-0}"
+    diff_rm="${cached_dr:-0}"
   fi
 fi
 
 # ═══════════════════════════════════════════════════════════════
-# Lines added/removed (hidden when zero)
+# Lines added/removed — real `git diff` (staged + unstaged), hidden when zero
 # ═══════════════════════════════════════════════════════════════
 
-lines_add=${lines_add:-0}
-lines_rm=${lines_rm:-0}
+lines_add=${diff_add:-0}
+lines_rm=${diff_rm:-0}
 lines_section=""
 if (( lines_add > 0 || lines_rm > 0 )); then
   lines_section="${GREEN}${S_ADD}${lines_add}${RST}/${RED}${S_RM}${lines_rm}${RST}"
@@ -432,9 +441,11 @@ if (( rate5h_int >= 0 )); then
   rate_parts+="$(gradient_text "5h:${rate5h_int}%" 46 204 113 "$er" "$eg" "$eb" "$GREEN") $(make_bar "$rate5h_int" 10)"
   if (( reset5h_at > 0 )); then
     rate_parts+=" ${GRAY}↻ $(format_reset_clock "$reset5h_at")${RST}"
+  else
+    rate_parts+=" ${GRAY}↻ --:--${RST}"
   fi
 else
-  rate_parts+="${GRAY}5h:--%${RST} $(make_bar 0 10)"
+  rate_parts+="${GRAY}5h:--%${RST} $(make_bar 0 10) ${GRAY}↻ --:--${RST}"
 fi
 rate_parts+="${SEP}"
 if (( rate7d_int >= 0 )); then
@@ -442,9 +453,11 @@ if (( rate7d_int >= 0 )); then
   rate_parts+="$(gradient_text "7d:${rate7d_int}%" 46 204 113 "$er" "$eg" "$eb" "$GREEN") $(make_bar "$rate7d_int" 10)"
   if (( reset7d_at > 0 )); then
     rate_parts+=" ${GRAY}↻ $(format_reset_clock "$reset7d_at")${RST}"
+  else
+    rate_parts+=" ${GRAY}↻ --:--${RST}"
   fi
 else
-  rate_parts+="${GRAY}7d:--%${RST} $(make_bar 0 10)"
+  rate_parts+="${GRAY}7d:--%${RST} $(make_bar 0 10) ${GRAY}↻ --:--${RST}"
 fi
 if [[ -n "$rate_parts" ]]; then
   rate_section="${SEP}${S_RATE}${rate_parts}"
