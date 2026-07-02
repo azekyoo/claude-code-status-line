@@ -104,6 +104,16 @@ Restart Claude Code. The status line appears after your next message.
 
 If you don't like it, just restore your previous `statusLine.command` value in `settings.json` (or delete the `statusLine` key entirely to go back to Claude Code's default). Nothing else on your system is touched — `~/bin/jq.exe`, if installed, is harmless to leave in place or delete.
 
+### Updating
+
+`install.sh` copies the script into place rather than linking it, so `git pull` alone won't update your live status line — it only updates your local clone. Re-run `install.sh` afterward to pick up the change.
+
+Paste this into Claude Code:
+
+```
+Update my Claude Code status line — find my local clone of https://github.com/azekyoo/claude-code-status-line, git pull it, then re-run install.sh.
+```
+
 ## Configuration
 
 All via environment variables (set them in `~/.bashrc`, or `env` in `settings.json` if you want them applied specifically for Claude Code):
