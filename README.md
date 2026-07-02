@@ -6,11 +6,11 @@ This is a Windows-compatible fork of [kcchien/claude-code-statusline](https://gi
 
 ## What it looks like
 
-![Normal state](docs/images/normal.svg?v=2)
+![Normal state](docs/images/normal.svg?v=3)
 
 - Model name and directory path render as smooth per-character truecolor gradients.
 - Context-window usage bar: green → yellow → orange → red, 10 blocks.
-- 5h / 7d rate-limit usage: same gradient bar style, label + value gradient text.
+- 5h / 7d rate-limit usage: same gradient bar style, label + value gradient text, plus when each window resets (local clock time — always visible, "--%" placeholder before Claude Code has usage data yet).
 - Git branch, dirty flag (`*`), ahead/behind vs. upstream (`↑`/`↓`).
 - Lines added/removed, current directory, active subagent/worktree indicator.
 - Degrades cleanly: truecolor → ANSI 256 → plain ASCII, and Nerd Font / emoji / plain-Unicode icon sets.
@@ -18,22 +18,22 @@ This is a Windows-compatible fork of [kcchien/claude-code-statusline](https://gi
 ### All states
 
 **Warning** (75% context)
-![Warning](docs/images/warning.svg?v=2)
+![Warning](docs/images/warning.svg?v=3)
 
 **Danger** (92% context, high rate limits)
-![Danger](docs/images/danger.svg?v=2)
+![Danger](docs/images/danger.svg?v=3)
 
 **Dirty branch, ahead/behind upstream**
-![Git status](docs/images/git-status.svg?v=2)
+![Git status](docs/images/git-status.svg?v=3)
 
 **Active worktree**
-![Worktree](docs/images/worktree.svg?v=2)
+![Worktree](docs/images/worktree.svg?v=3)
 
 **Active subagent**
-![Agent](docs/images/agent.svg?v=2)
+![Agent](docs/images/agent.svg?v=3)
 
 **ASCII fallback** (`CLAUDE_STATUSLINE_ASCII=1`)
-![ASCII](docs/images/ascii.svg?v=2)
+![ASCII](docs/images/ascii.svg?v=3)
 
 These are real, exact renders of `statusline.sh`'s actual ANSI/truecolor output against hardcoded mock states — not manual screenshots. (Generated with a small internal dev script, kept out of this repo — not needed to use or configure the status line.)
 
