@@ -396,7 +396,10 @@ if (( lines_add > 0 || lines_rm > 0 )); then
 fi
 
 # ═══════════════════════════════════════════════════════════════
-# Rate limits (5h / 7d) — gradient text + gradient bar, shown when present
+# Rate limits (5h / 7d) — gradient text + gradient bar. Always shown, even
+# before Claude Code has usage data (e.g. right at session start), as a
+# "--%"  placeholder — keeps the layout stable instead of the section
+# popping in after the first turn.
 # ═══════════════════════════════════════════════════════════════
 
 rate_section=""
@@ -407,11 +410,15 @@ rate_parts=""
 if (( rate5h_int >= 0 )); then
   read -r er eg eb <<< "$(pct_gradient_rgb "$rate5h_int")"
   rate_parts+="$(gradient_text "5h:${rate5h_int}%" 46 204 113 "$er" "$eg" "$eb" "$GREEN") $(make_bar "$rate5h_int" 10)"
+else
+  rate_parts+="${GRAY}5h:--%${RST} $(make_bar 0 10)"
 fi
+rate_parts+="${SEP}"
 if (( rate7d_int >= 0 )); then
-  if [[ -n "$rate_parts" ]]; then rate_parts+="${SEP}"; fi
   read -r er eg eb <<< "$(pct_gradient_rgb "$rate7d_int")"
   rate_parts+="$(gradient_text "7d:${rate7d_int}%" 46 204 113 "$er" "$eg" "$eb" "$GREEN") $(make_bar "$rate7d_int" 10)"
+else
+  rate_parts+="${GRAY}7d:--%${RST} $(make_bar 0 10)"
 fi
 if [[ -n "$rate_parts" ]]; then
   rate_section="${SEP}${S_RATE}${rate_parts}"
