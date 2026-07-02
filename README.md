@@ -1,4 +1,4 @@
-# claude-status-line
+# claude-code-status-line
 
 A gradient, emoji-accented status line for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — with first-class **Windows** support.
 
@@ -58,14 +58,14 @@ This fork fixes all four, plus adds the gradient/rate-limit/git features above.
 Paste this into Claude Code:
 
 ```
-Install the Claude Code status line from https://github.com/azekyoo/claude-status-line — clone it, run install.sh, and add the statusLine block to my ~/.claude/settings.json.
+Install the Claude Code status line from https://github.com/azekyoo/claude-code-status-line — clone it, run install.sh, and add the statusLine block to my ~/.claude/settings.json.
 ```
 
 ## Manual install
 
 ```bash
-git clone https://github.com/azekyoo/claude-status-line.git
-cd claude-status-line
+git clone https://github.com/azekyoo/claude-code-status-line.git
+cd claude-code-status-line
 ./install.sh
 ```
 
