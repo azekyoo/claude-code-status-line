@@ -6,7 +6,7 @@ This started as a fork of [kcchien/claude-code-statusline](https://github.com/kc
 
 ## What it looks like
 
-![Normal state](docs/images/normal.svg?v=5)
+![Normal state](docs/images/normal.svg?v=6)
 
 - Model name and directory path render as smooth per-character truecolor gradients.
 - Context-window usage bar: green → yellow → orange → red, 10 blocks.
@@ -17,23 +17,23 @@ This started as a fork of [kcchien/claude-code-statusline](https://github.com/kc
 
 ### All states
 
-**Warning** (75% context)
-![Warning](docs/images/warning.svg?v=5)
+**Warning** (70% context)
+![Warning](docs/images/warning.svg?v=6)
 
-**Danger** (92% context, high rate limits)
-![Danger](docs/images/danger.svg?v=5)
+**Danger** (75% context, high rate limits)
+![Danger](docs/images/danger.svg?v=6)
 
 **Dirty branch, ahead/behind upstream**
-![Git status](docs/images/git-status.svg?v=5)
+![Git status](docs/images/git-status.svg?v=6)
 
 **Active worktree**
-![Worktree](docs/images/worktree.svg?v=5)
+![Worktree](docs/images/worktree.svg?v=6)
 
 **Active subagent**
-![Agent](docs/images/agent.svg?v=5)
+![Agent](docs/images/agent.svg?v=6)
 
 **ASCII fallback** (`CLAUDE_STATUSLINE_ASCII=1`)
-![ASCII](docs/images/ascii.svg?v=5)
+![ASCII](docs/images/ascii.svg?v=6)
 
 ## Why this fork exists
 

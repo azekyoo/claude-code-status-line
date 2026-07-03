@@ -358,9 +358,9 @@ if (( pct_int >= 90 )); then pct_color="$RED"
 elif (( pct_int >= 70 )); then pct_color="$YELLOW"
 else pct_color="$GREEN"; fi
 
-# Warning glyph — fires at 75%, roughly where auto-compact kicks in, not at
-# 90% (with auto-compact on, used_percentage rarely gets that high, which
-# made the flame nearly unreachable in practice).
+# Warning glyph — fires at 75% as an early "context getting heavy" signal.
+# (Auto-compact defaults to ~95% of the window, so this is deliberately well
+# ahead of it, not tied to it.)
 ctx_warn=""
 if (( pct_int >= 75 )); then ctx_warn="${RED}${S_WARN}${RST}"; fi
 
