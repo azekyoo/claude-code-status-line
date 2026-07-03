@@ -220,6 +220,40 @@ format_reset_clock() {
   fi
 }
 
+# Rate-limit label ("5h:42%") as a gradient between two NEIGHBORING points on
+# the usage scale: right = color at current pct, left = color ~30pts earlier
+# (floored at 0 = base green). Similar hues fade into each other instead of
+# spanning the whole green→red rainbow at every usage level.
+rate_label() {
+  local name="$1" pct="$2" lo sr sg sb er eg eb fb
+  lo=$(( pct - 30 ))
+  if (( lo < 0 )); then lo=0; fi
+  read -r sr sg sb <<< "$(pct_gradient_rgb "$lo")"
+  read -r er eg eb <<< "$(pct_gradient_rgb "$pct")"
+  if (( pct >= 90 )); then fb="$RED"
+  elif (( pct >= 70 )); then fb="$YELLOW"
+  else fb="$GREEN"; fi
+  gradient_text "${name}:${pct}%" "$sr" "$sg" "$sb" "$er" "$eg" "$eb" "$fb"
+}
+
+# Reset clock display: gray normally; at >=90% usage it becomes an urgency
+# gradient (yellow/orange → red) so the eye lands on when the limit lifts.
+format_reset_display() {
+  local epoch="$1" pct="$2" clock
+  if (( epoch > 0 )); then
+    clock=$(format_reset_clock "$epoch")
+  else
+    clock="--:--"
+  fi
+  # Gradient only the clock text — ↻ is multibyte and gradient_text slices
+  # per character, which shreds it into mojibake on some locales.
+  if (( pct >= 90 )); then
+    printf '%s' "${GRAY}↻ ${RST}$(gradient_text "${clock}" 241 196 15 231 76 60 "$RED")"
+  else
+    printf '%s' "${GRAY}↻ ${clock}${RST}"
+  fi
+}
+
 # ═══════════════════════════════════════════════════════════════
 # Fallback output
 # ═══════════════════════════════════════════════════════════════
@@ -355,7 +389,9 @@ else cost_color="$YELLOW"; fi
 # Git branch, dirty flag, ahead/behind (cached)
 # ═══════════════════════════════════════════════════════════════
 
-GIT_CACHE="/tmp/claude-statusline-git-cache"
+# Cache scoped per-directory (hash of cwd) so quick tests against different
+# repos don't read stale branch/dirty state from the previous one.
+GIT_CACHE="/tmp/claude-statusline-git-cache-$(printf '%s' "${cwd_full:-}" | cksum | cut -d' ' -f1)"
 GIT_CACHE_MAX_AGE=5
 
 git_branch="${branch:-}"
@@ -444,25 +480,15 @@ reset7d_at=${reset7d_at:-0}
 
 rate_parts=""
 if (( rate5h_int >= 0 )); then
-  read -r er eg eb <<< "$(pct_gradient_rgb "$rate5h_int")"
-  rate_parts+="$(gradient_text "5h:${rate5h_int}%" 46 204 113 "$er" "$eg" "$eb" "$GREEN") $(make_bar "$rate5h_int" 10)"
-  if (( reset5h_at > 0 )); then
-    rate_parts+=" ${GRAY}↻ $(format_reset_clock "$reset5h_at")${RST}"
-  else
-    rate_parts+=" ${GRAY}↻ --:--${RST}"
-  fi
+  rate_parts+="$(rate_label "5h" "$rate5h_int") $(make_bar "$rate5h_int" 10)"
+  rate_parts+=" $(format_reset_display "$reset5h_at" "$rate5h_int")"
 else
   rate_parts+="${GRAY}5h:--%${RST} $(make_bar 0 10) ${GRAY}↻ --:--${RST}"
 fi
 rate_parts+="${SEP}"
 if (( rate7d_int >= 0 )); then
-  read -r er eg eb <<< "$(pct_gradient_rgb "$rate7d_int")"
-  rate_parts+="$(gradient_text "7d:${rate7d_int}%" 46 204 113 "$er" "$eg" "$eb" "$GREEN") $(make_bar "$rate7d_int" 10)"
-  if (( reset7d_at > 0 )); then
-    rate_parts+=" ${GRAY}↻ $(format_reset_clock "$reset7d_at")${RST}"
-  else
-    rate_parts+=" ${GRAY}↻ --:--${RST}"
-  fi
+  rate_parts+="$(rate_label "7d" "$rate7d_int") $(make_bar "$rate7d_int" 10)"
+  rate_parts+=" $(format_reset_display "$reset7d_at" "$rate7d_int")"
 else
   rate_parts+="${GRAY}7d:--%${RST} $(make_bar 0 10) ${GRAY}↻ --:--${RST}"
 fi
