@@ -1,8 +1,8 @@
 # claude-code-status-line
 
-A gradient, emoji-accented status line for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — with first-class **Windows** support.
+A gradient, emoji-accented status line for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — works on **Windows, macOS, and Linux**.
 
-This is a Windows-compatible fork of [kcchien/claude-code-statusline](https://github.com/kcchien/claude-code-statusline), rebuilt and extended for git-bash / Windows Terminal, with a heavier focus on gradient rendering, rate-limit visibility, and git status.
+This started as a fork of [kcchien/claude-code-statusline](https://github.com/kcchien/claude-code-statusline), which only worked on macOS/Linux, and was rebuilt to add first-class **Windows** support (git-bash / Windows Terminal) alongside a heavier focus on gradient rendering, rate-limit visibility, and git status. macOS/Linux compatibility is preserved throughout.
 
 ## What it looks like
 
